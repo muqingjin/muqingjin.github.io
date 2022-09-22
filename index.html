@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Free Web tutorials on HTML, CSS, XML" />
+    <title>二值化测试网页</title>
+    <link href="css_1/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<style>
+      
+    /* 设置 id 为 "header" 和"footer"的元素的样式 */
+    #header {
+       padding: 4px;
+       text-align: center;
+    }
+    #footer {
+       background-color:rgba(92, 92, 92, 0.825);
+       color:rgb(252, 248, 248);
+       clear:both;
+       text-align:center;
+       padding:5px; 
+    }
+    
+     /* 设置类名为 "section"等 的所有元素的样式 */
+     .section {
+       line-height:30px;
+       padding:10px;
+       position: relative;
+       display:flex;
+       justify-content: space-between;
+    }
+    
+    .menuitem {
+       background-color:#f0e9e9b9;
+       padding:4px; 
+       border: 1px solid #201e8ed4;
+       list-style-type: none;
+       cursor: pointer;
+       border-radius: 4px;
+       margin: 4px;
+    }
+    .tablestyle {
+        caption-side: top;
+        padding: 10px;
+        border: thick double #32a1ce;
+        margin: 0 auto;
+    }
+</style>
+ 
+
+
+
+<body background="white" onload="myFunction()">
+
+    
+
+
+    <head>
+        <h1 id="header" >土壤微生物菌落浓度检测</h1>
+    </head>
+
+    <div class="section">
+        <div width="30%"  style="background:rgb(220, 220, 220); color:rgb(0, 0, 0);width:25%">
+            <h3>操作区域</h3>
+            <div class="menuitem">
+                输入图片:<br /><input type="file" id="fileInput" accept="image/*" name="file" />
+            </div>
+        <br/><hr />
+            <div id="savefull" class="menuitem">
+                保存文件:<br /><button id="save">保存</button>
+            </div>
+        <br/><br/><br/><hr />
+            <h3>二值化阈值设置</h3>
+            <input type="range" id="myRange" min="0" max="255" step="1" value="0">
+            <p id="demo"></p>
+            <button class="menuitem" id="getImgBtn">原图应用二值化</button><br/>
+            <button class="menuitem" id="erode">图像腐蚀</button><br/>
+            <button class="menuitem" id="dilate">图像膨胀</button><br/>
+            <button class="menuitem" id="contourm">选取轮廓并计算比例</button><br/>
+            <p id="areaOutput">
+        </div>
+
+        <canvas id="fullImgInput" width="5000" height="5000" style="width: 5000px;height: 5000px;position:fixed;left:100%;"></canvas>
+        <canvas id="fullImgOutput" width="5000" height="5000" style="width: 5000px;height: 5000px;position:fixed;left:100%;"></canvas>
+
+        <div style="background:rgb(255, 255, 255); color:rgb(0, 0, 0);width:48% ;text-align:center ">
+           <canvas id="canvasInput" width="650" height="450"></canvas>
+           <hr />
+           <h3>输出图片:</h3>
+           <canvas id="canvasOutput" width="650" height="450"></canvas>
+        </div>
+
+        <div  width="30%"  style="background:rgb(220, 220, 220); color:rgb(0, 0, 0);width:25%">
+            <table class="tablestyle" border="1" cellpadding="10">
+                <caption >面积比例表</caption>
+                <tr>
+                  <th>操作次序</th>
+                  <th>近似面积</th>
+                  <th>比例(%)</th>
+                </tr>
+                <tr></tr>
+                </table>
+        </div>
+    </div>
+
+     <div id="footer">
+        <a href="http://www.w3school.com.cn" style="text-decoration:none">参考链接:http://www.w3school.com.cn</a>
+    </div>
+
+   <script type="text/javascript">
+    let inputElement = document.getElementById('fileInput');
+    let imgBtn = document.getElementById('getImgBtn');
+    let img = new Image();//创建一个img元素
+    let loading = true;
+    let x = document.getElementById('myRange');/*二值化范围*/
+    let r = 0;//信号量
+    let p = 0;//信号量
+    let q = 1;//信号量
+    let fileOrder = 0;//表格操作次序
+    let name = 0;//下载文件名称
+    document.getElementById("demo").innerHTML = x.value;/*二值化数值显示*/
+    inputElement.addEventListener('change', (e) => {img.src = URL.createObjectURL(e.target.files[0]);q = 1;}, false);/*输入图像显示*/
+    x.addEventListener('change',(e) => {p = x.value;document.getElementById("demo").innerHTML = p ;p = parseFloat(p);q = 1;r = 0;}, false);/*二值化数值范围*/
+    
+
+    img.onload = function() {
+    let inCanvas = document.getElementById('canvasInput')
+    let fullinCanvas = document.getElementById('fullImgInput')
+    let inCanvasCtx = inCanvas.getContext('2d')
+    let infullCanvasCtx =fullinCanvas.getContext('2d')
+    fullinCanvas.width = img.width
+    fullinCanvas.height = img.height
+    inCanvasCtx.drawImage(img,0,0,img.width,img.height,0,0,650,450)
+    infullCanvasCtx.drawImage(img,0,0,img.width,img.height,0,0,img.width,img.height)
+    };
+
+
+    imgBtn.addEventListener('click', (e) => {
+        if(!img.src) {
+         return alert('请先上传图片')
+         }
+       /*if(loading) {
+       return alert('正在加载')}*/
+        let src = cv.imread('canvasInput');
+         let src1 = cv.imread('fullImgInput')
+         let gray = new cv.Mat();
+         let gray1 = new cv.Mat();
+         let gray2 = new cv.Mat();
+         let gray3 = new cv.Mat();
+         cv.cvtColor(src, gray, cv.COLOR_BGR2GRAY);
+         cv.cvtColor(src1, gray1, cv.COLOR_BGR2GRAY);
+         cv.threshold (gray, gray2, p, 255, cv.THRESH_BINARY);
+         cv.threshold (gray1, gray3 , p, 255, cv.THRESH_BINARY);
+         cv.imshow('canvasOutput',gray2);
+         cv.imshow('fullImgOutput',gray3);
+         r = 1;
+         src.delete();src1.delete();gray.delete();gray1.delete();gray2.delete();gray3.delete();
+        })
+    
+   erode.addEventListener('click',(e) =>{
+        if(!img.src) {
+            return alert('请先上传图片')
+        }
+        if(!r){
+         return alert('请先应用二值化')
+         }
+        /*let src = cv.imread('canvasInput');
+         let src1 = cv.imread('fullImgInput')*/
+         let src = cv.imread('canvasOutput');
+         let src1 = cv.imread('fullImgOutput')
+         let dst = new cv.Mat();
+         let dst1 = new cv.Mat();
+         let M = cv.Mat.ones(2, 2, cv.CV_8U);/*腐蚀的核结构元素 内核可以使用getStructuringElement创建
+         /*let M = cv.Mat.ones(parseInt(erodeRange), parseInt(erodeRange), cv.CV_8U);*/
+         let anchor = new cv.Point(-1, -1);/*anchor 元素中锚的锚定位置; 默认值(-1，-1)表示锚位于元素中心。*/
+         cv.erode(src, dst, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());/*cv.Erode：形态腐蚀，“1”iterations 迭代次数，borderType 像素外推方法，borderValue 当边界为常数时的边界值*/
+        cv.erode(src1, dst1, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+         cv.imshow('canvasOutput', dst);
+         cv.imshow('fullImgOutput', dst1);
+         src.delete();src1.delete();dst.delete(); M.delete();dst1.delete();
+        })
+       
+       /*erode.addEventListener('click', (e) => {
+        if(!img.src) {
+            return alert('请先上传图片')
+        }
+        let src = cv.imread('canvasOutput');
+        let dst = new cv.Mat();
+        let M = cv.Mat.ones(parseInt(erodeRange), parseInt(erodeRange), cv.CV_8U);
+        let anchor = new cv.Point(-1, -1);
+        cv.erode(src, dst, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+        cv.imshow('canvasOutput', dst);})*/
+    
+
+         dilate.addEventListener('click',(e) =>{
+         if(!r){
+         return alert('请先应用二值化')
+          }
+         let src = cv.imread('canvasOutput');
+         let src1 = cv.imread('fullImgOutput')
+         let dst = new cv.Mat();
+         let dst1 = new cv.Mat();
+         let M = cv.Mat.ones(2, 2,cv.CV_8U);
+         let anchor = new cv.Point(-1, -1);
+         cv.dilate(src, dst, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());/*cv.Dilate：形态学膨胀*/
+         cv.dilate(src1, dst1, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+         cv.imshow('canvasOutput', dst);
+         cv.imshow('fullImgOutput', dst1);
+         src.delete();src1.delete();dst.delete(); M.delete();dst1.delete();
+        })   
+
+
+        contourm.addEventListener('click',(e) =>{
+         if(!r){
+         return alert('请先应用二值化')
+         }
+         if(q){
+         q = 0;
+         let src = cv.imread('canvasOutput');
+         let src1 = cv.imread('fullImgOutput');
+         let dst = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
+         let dst1 = cv.Mat.zeros(src1.rows, src1.cols, cv.CV_8UC3);
+         cv.cvtColor(src, src, cv.COLOR_BGR2GRAY);
+         cv.cvtColor(src1, src1, cv.COLOR_BGR2GRAY);
+         let contours = new cv.MatVector();
+         let contours1 = new cv.MatVector();
+         let hierarchy = new cv.Mat();
+         let hierarchy1 = new cv.Mat();
+         cv.findContours(src, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);/*cv.FindContours：从二值图像中寻找轮廓*/
+         cv.findContours(src1, contours1, hierarchy1, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+         let color = new cv.Scalar(255,255,0);
+         for (let i = 0; i < contours.size(); ++i) {
+         cv.drawContours(dst, contours, i, color, 1, cv.LINE_8, hierarchy, 100);/*cv.DrawContours：绘制轮廓；*/
+         }
+         for (let i = 0; i < contours1.size(); ++i){
+         cv.drawContours(dst1, contours1, i, color, 1, cv.LINE_8, hierarchy1, 100);
+         }
+         cv.imshow('canvasOutput', dst);
+         cv.imshow('fullImgOutput', dst1);
+
+         let cnt = new cv.Mat();
+         let area = 0;
+         for (let i = 0; i < contours1.size();++i)
+         {
+         cnt = contours1.get(i);
+         area = area + cv.contourArea(cnt);
+         }
+         areaOutput.innerHTML = area;
+         parseFloat(area);
+         var table = document.getElementsByTagName('table')[0];
+         var tr = document.createElement('tr');
+         var ratio = 100*area/(img.height*img.width);
+         tr.innerHTML = "<td>"+(++fileOrder)+"</td><td>"+area+"</td><td>"+ratio.toFixed(2)+"</td>";
+         table.appendChild(tr);
+         src.delete(); dst.delete(); contours.delete(); hierarchy.delete();contours1.delete(); hierarchy1.delete();src1.delete();dst1.delete();
+         }
+         else
+         return alert('更改图像或二值化参数后再试试吧');
+        })
+
+    function onOpenUtilsReady() {
+         let utils = new Utils('errorMessage');
+         utils.loadOpenCv(() => {
+         let cvFile = 'opencv.js';
+         utils.createFileFromUrl(cvFile, cvFile, () => {
+         document.getElementById('status').innerHTML = 'OpenCV.js is ready.';
+         loading = false;
+          });
+         })
+        } 
+    </script>
+    <script async src="opencv.js" onload="onOpenUtilsReady();" type="text/javascript"></script>
+       
+</body>
+
+</html>

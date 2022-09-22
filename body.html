@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+<body background="white" onload="myFunction()">
+
+    <head>
+            <!--注释。注释不会在浏览器中显示。-->
+            <h1 id="header" >土壤微生物菌落浓度检测</h1>
+    </head>
+    
+    <div class="section">
+        <div width="30%"  style="background:rgb(220, 220, 220); color:rgb(0, 0, 0);width:25%">
+                <h3>操作区域</h3>
+            <div class="menuitem">
+                    输入图片:<br /><input type="file" id="fileInput" accept="image/*" name="file" />
+            </div>
+            <br/><hr />
+            <div id="savefull" class="menuitem">
+                    保存文件:<br /><button id="save">保存</button>
+             </div>
+            <br/><br/><br/><hr />
+                <h3>二值化阈值设置</h3>
+                <input type="range" id="myRange" min="0" max="255" step="1" value="0">
+                <p id="demo"></p>
+                <button class="menuitem" id="getImgBtn">原图应用二值化</button><br/>
+                <button class="menuitem" id="erode">图像腐蚀</button><br/>
+                <button class="menuitem" id="dilate">图像膨胀</button><br/>
+                <button class="menuitem" id="contourm">选取轮廓并计算比例</button><br/>
+                <p id="areaOutput">
+        </div>
+    
+    
+        <canvas id="fullImgInput" width="4000" height="4000" style="width: 4000px;height: 4000px;position:fixed;left:100%;">
+            Your browser does not support the HTML5 canvas tag.</canvas>
+        <canvas id="fullImgOutput" width="4000" height="4000" style="width: 4000px;height: 4000px;position:fixed;left:100%;"></canvas>
+    
+    
+        <div style="background:rgb(255, 255, 255); color:rgb(0, 0, 0);width:48% ;text-align:center ">
+               <canvas id="canvasInput" width="650" height="450"></canvas>
+               <p id="status">OpenCV.js is loading...</p>
+               <hr />
+               <h3>输出图片:</h3>
+               <canvas id="canvasOutput" width="650" height="450"></canvas>
+        </div>
+    
+    
+        <div  width="30%"  style="background:rgb(220, 220, 220); color:rgb(0, 0, 0);width:25%">
+                <table class="tablestyle" border="1" cellpadding="10">
+                <caption >面积比例表</caption>
+                <tr>
+                  <th>操作次序</th>
+                  <th>近似面积</th>
+                  <th>比例(%)</th>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                </table>
+        </div>
+    </div>
+    
+     
+    <div id="footer">
+            <a href="http://www.w3school.com.cn" style="text-decoration:none">参考链接:http://www.w3school.com.cn</a>
+    </div>     
+    </body>
+
+
+</html>

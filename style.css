@@ -1,0 +1,41 @@
+
+       
+        /* 设置 id 为 "header" 和"footer"的元素的样式 */
+        #header {
+           padding: 4px;
+           text-align: center;
+        }
+        #footer {
+           background-color:rgba(92, 92, 92, 0.825);
+           color:rgb(252, 248, 248);
+           clear:both;
+           text-align:center;
+           padding:5px; 
+        }
+        
+         /* 设置类名为 "section"等 的所有元素的样式 */
+         .section {
+           line-height:30px;
+           padding:10px;
+           position: relative;
+           display:flex;
+           justify-content: space-between;
+        }
+
+        .menuitem {
+           background-color:#f0e9e9b9;
+           padding:4px; 
+           border: 1px solid #201e8ed4;
+           list-style-type: none;
+           cursor: pointer;
+           border-radius: 4px;
+           margin: 4px;
+        }
+        .tablestyle {
+            caption-side: top;
+            padding: 10px;
+            border: thick double #32a1ce;
+            margin: 0 auto;
+        }
+
+  
